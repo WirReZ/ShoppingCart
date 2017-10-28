@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">ShoppingCart</string>
+
+    <!-- Drawer Items -->
+    <string name="drawer_item_compact_header">CompactHeader Drawer</string>
+    <string name="drawer_item_action_bar_drawer">ActionBar Drawer</string>
+    <string name="drawer_item_multi_drawer">Multi Drawer</string>
+    <string name="drawer_item_non_translucent_status_drawer">NonTranslucentStatus Drawer</string>
+    <string name="drawer_item_advanced_drawer">Advanced Drawer</string>
+
+
+    <string name="drawer_item_section_header">Section Header</string>
+    <string name="drawer_item_open_source">Open Source</string>
+    <string name="drawer_item_contact">Contact</string>
+
 </resources>

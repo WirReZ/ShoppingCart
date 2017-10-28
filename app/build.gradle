@@ -5,7 +5,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.wirrez.shoppingcart"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -25,5 +25,13 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+    compile('com.mikepenz:materialdrawer:5.9.5@aar') {
+        transitive = true
+    }
+    compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
+    compile 'com.mikepenz:fontawesome-typeface:4.7.0.0@aar'
+    compile 'com.mikepenz:octicons-typeface:3.0.0.1@aar'
+
+    compile 'com.mxn.soul:flowingdrawer-core:2.0.0'
+    compile 'com.nineoldandroids:library:2.4.0'
 }
