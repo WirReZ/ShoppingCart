@@ -122,7 +122,7 @@ public class Database extends SQLiteOpenHelper{
     // TODO make Custom Adapter
     public List<CategoryItem> getItems(long id)
     {
-
+            return null;
     }
     //Update
     public boolean updateCategory(long id, String title, Drawable icon)
@@ -174,7 +174,7 @@ public class Database extends SQLiteOpenHelper{
     //Other
     public long getCountItemsOfCategory(long id)
     {
-        SQLiteDatabase db = new this.getWritableDatabase();
+        SQLiteDatabase db =  this.getWritableDatabase();
         Cursor cur =  db.query(ItemEntry.TABLE_NAME,null,ItemEntry.KEY_CAT_ID+"=?",new String[]{String.valueOf(id)},null,null,null);
         cur.moveToFirst();
         long count = cur.getCount();

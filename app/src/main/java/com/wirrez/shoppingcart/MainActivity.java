@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         Database db = new Database(this);
       //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
 
-       /* final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
+        final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
 
         // Create the AccountHeader
         headerResult = new AccountHeaderBuilder()
@@ -59,8 +59,8 @@ public class MainActivity extends Activity {
                 .withTranslucentStatusBar(false)
                 .addProfiles(
                         profile,
-                        new ProfileSettingDrawerItem().withName("Add Account").withDescription("Add new FB Account").withIcon(GoogleMaterial.Icon.gmd_facebook).withIdentifier(1),
-                        new ProfileSettingDrawerItem().withName("Manage Account").withIcon(GoogleMaterial.Icon.gmd_settings)
+                        new ProfileSettingDrawerItem().withName("Add Account").withDescription(R.string.drawer_add_user).withIcon(GoogleMaterial.Icon.gmd_account_add).withIdentifier(1)
+                       // new ProfileSettingDrawerItem().withName("Manage Account").withIcon(GoogleMaterial.Icon.gmd_settings)
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
@@ -68,13 +68,13 @@ public class MainActivity extends Activity {
                         //sample usage of the onProfileChanged listener
                         //if the clicked item has the identifier 1 add a new profile ;)
                         if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == 1) {
-                            IProfile newProfile = new ProfileDrawerItem().withNameShown(true).withName("Batman").withEmail("batman@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile5));
-                            if (headerResult.getProfiles() != null) {
+                        //    IProfile newProfile = new ProfileDrawerItem().withNameShown(true).withName("Batman").withEmail("batman@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile5));
+                          /*  if (headerResult.getProfiles() != null) {
                                 //we know that there are 2 setting elements. set the new profile above them ;)
                                 headerResult.addProfile(newProfile, headerResult.getProfiles().size() - 2);
                             } else {
                                 headerResult.addProfiles(newProfile);
-                            }
+                            }*/
                         }
                         //false if you have not consumed the event and it should close the drawer
                         return false;
@@ -82,24 +82,18 @@ public class MainActivity extends Activity {
                 })
                 .withSavedInstance(savedInstanceState)
                 .build();
-*/
+
 
         Drawer result = new DrawerBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
-
                 .withAccountHeader(headerResult) //set the AccountHeader we created earlier for the header
                 .addDrawerItems(
                         db.GetCategoryItems()
-                      /*  new PrimaryDrawerItem().withName(R.string.drawer_item_compact_header).withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_action_bar_drawer).withIcon(FontAwesome.Icon.faw_home).withBadge("22").withBadgeStyle(new BadgeStyle(Color.RED, Color.RED)).withIdentifier(2),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_multi_drawer).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(3),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_non_translucent_status_drawer).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(4),
-                        new PrimaryDrawerItem().withDescription("A more complex sample").withName(R.string.drawer_item_advanced_drawer).withIcon(GoogleMaterial.Icon.gmd_adb).withIdentifier(5),
-                        new SectionDrawerItem().withName(R.string.drawer_item_section_header),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_open_source).withIcon(FontAwesome.Icon.faw_github),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(GoogleMaterial.Icon.gmd_format_color_fill).withTag("Bullhorn")*/
                 )
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName(R.string.drawer_settings).withIcon(GoogleMaterial.Icon.gmd_settings).withTag("settings"),
+                        new SecondaryDrawerItem().withName(R.string.drawer_add_category).withIcon(GoogleMaterial.Icon.gmd_plus)).withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -113,7 +107,6 @@ public class MainActivity extends Activity {
                 .buildView();
 
         mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
-
         fml.addView(result.getSlider());
     }
     protected void setToolBar()
