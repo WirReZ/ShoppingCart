@@ -1,12 +1,10 @@
 package com.wirrez.shoppingcart;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -17,12 +15,9 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
@@ -30,6 +25,7 @@ import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -38,14 +34,48 @@ public class MainActivity extends Activity {
     private float ToolBarOffset;
     private boolean ToolBarFlipped;
     private  DrawerArrowDrawable drawerArrowDrawable;
+    private static CustomItemAdapter adapter;
+    private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDrawer = (FlowingDrawer) findViewById(R.id.drawerlayout);
-        FlowingMenuLayout fml = (FlowingMenuLayout) findViewById(R.id.menulayout);
+        mDrawer =  findViewById(R.id.drawerlayout);
+        FlowingMenuLayout fml =  findViewById(R.id.menulayout);
+        recyclerView=  findViewById(R.id.rvFeed);
         setToolBar();
+        //Adapter test
+
+        ArrayList<Item> itm = new ArrayList<>();
+        itm.add(new Item(0,"test",1,null,false) );
+        itm.add(new Item(1,"test",1,null,false) );
+        itm.add(new Item(2,"test",1,null,true) );
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+
+        recyclerView.setLayoutManager(mLayoutManager);
+        adapter = new CustomItemAdapter(itm);
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnItemTouchListener(new TouchListener(getApplicationContext(), recyclerView, new TouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) { // TODO
+                Toast.makeText(getApplicationContext(), "selected", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) { // TODO
+                Toast.makeText(getApplicationContext(), "selected show menu", Toast.LENGTH_SHORT).show();
+            }
+        }));
+
+        adapter.notifyDataSetChanged();
+
+        // end of adapter test
 
         Database db = new Database(this);
       //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
@@ -77,7 +107,7 @@ public class MainActivity extends Activity {
                             }*/
                         }
                         //false if you have not consumed the event and it should close the drawer
-                        return false;
+                        return true;
                     }
                 })
                 .withSavedInstance(savedInstanceState)
@@ -98,9 +128,10 @@ public class MainActivity extends Activity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
-                            Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
+                           Toast.makeText(MainActivity.this,String.valueOf(drawerItem.getIdentifier()),Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
                         }
-                        return false;
+                        return true;
                     }
                 })
                 .withSavedInstance(savedInstanceState)
@@ -108,6 +139,7 @@ public class MainActivity extends Activity {
 
         mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
         fml.addView(result.getSlider());
+
     }
     protected void setToolBar()
     {
