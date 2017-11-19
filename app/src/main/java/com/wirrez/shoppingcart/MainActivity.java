@@ -1,9 +1,12 @@
 package com.wirrez.shoppingcart;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,6 +30,8 @@ import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
+import java.util.List;
+
 public class MainActivity extends Activity {
     private AccountHeader headerResult = null;
     private  FlowingDrawer mDrawer =  null;
@@ -41,7 +46,11 @@ public class MainActivity extends Activity {
         mDrawer = (FlowingDrawer) findViewById(R.id.drawerlayout);
         FlowingMenuLayout fml = (FlowingMenuLayout) findViewById(R.id.menulayout);
         setToolBar();
-        final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
+
+        Database db = new Database(this);
+      //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
+
+       /* final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
 
         // Create the AccountHeader
         headerResult = new AccountHeaderBuilder()
@@ -73,20 +82,23 @@ public class MainActivity extends Activity {
                 })
                 .withSavedInstance(savedInstanceState)
                 .build();
+*/
 
         Drawer result = new DrawerBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
+
                 .withAccountHeader(headerResult) //set the AccountHeader we created earlier for the header
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_compact_header).withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1),
+                        db.GetCategoryItems()
+                      /*  new PrimaryDrawerItem().withName(R.string.drawer_item_compact_header).withIcon(GoogleMaterial.Icon.gmd_sun).withIdentifier(1),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_action_bar_drawer).withIcon(FontAwesome.Icon.faw_home).withBadge("22").withBadgeStyle(new BadgeStyle(Color.RED, Color.RED)).withIdentifier(2),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_multi_drawer).withIcon(FontAwesome.Icon.faw_gamepad).withIdentifier(3),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_non_translucent_status_drawer).withIcon(FontAwesome.Icon.faw_eye).withIdentifier(4),
                         new PrimaryDrawerItem().withDescription("A more complex sample").withName(R.string.drawer_item_advanced_drawer).withIcon(GoogleMaterial.Icon.gmd_adb).withIdentifier(5),
                         new SectionDrawerItem().withName(R.string.drawer_item_section_header),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_open_source).withIcon(FontAwesome.Icon.faw_github),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(GoogleMaterial.Icon.gmd_format_color_fill).withTag("Bullhorn")
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(GoogleMaterial.Icon.gmd_format_color_fill).withTag("Bullhorn")*/
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
