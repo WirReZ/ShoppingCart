@@ -1,6 +1,7 @@
 package com.wirrez.shoppingcart;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -123,11 +124,15 @@ public class MainActivity extends Activity {
                 )
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem().withName(R.string.drawer_settings).withIcon(GoogleMaterial.Icon.gmd_settings).withTag("settings"),
-                        new SecondaryDrawerItem().withName(R.string.drawer_add_category).withIcon(GoogleMaterial.Icon.gmd_plus)).withStickyFooterShadow(false)
+                        new SecondaryDrawerItem().withName(R.string.drawer_add_category).withIcon(GoogleMaterial.Icon.gmd_plus).withTag("add_category")).withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
+                            if(drawerItem.getTag() == "add_category")
+                            {
+
+                            }
                            Toast.makeText(MainActivity.this,String.valueOf(drawerItem.getIdentifier()),Toast.LENGTH_SHORT).show();
                            // Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
                         }
