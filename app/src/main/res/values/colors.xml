@@ -7,5 +7,8 @@
     <color name="dark_gray">#3d454c</color>
     <color name="dark_gray_pressed">#373e44</color>
     <color name="darker_gray">#1f2226</color>
-        <color name="title">#222222</color>
+    <color name="title">#222222</color>
+    <color name="ripple">#F06292</color>
+    <color name="primary_pressed">#C2185B</color>
+    <color name="accent_pressed">#C2185B</color>
 </resources>
