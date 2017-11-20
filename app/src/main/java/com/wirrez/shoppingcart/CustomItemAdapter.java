@@ -46,7 +46,7 @@ public class CustomItemAdapter extends RecyclerView.Adapter<CustomItemAdapter.Vi
     public void onBindViewHolder(CustomItemAdapter.ViewHolder holder, int position) {
         final Item itm = values.get(position);
         holder.txtName.setText(itm._name);
-        holder.txtCount.setText(String.valueOf(itm._count));
+        holder.txtCount.setText(String.valueOf(itm._count) + " "+String.valueOf(itm._unit));
     }
 
     @Override

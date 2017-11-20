@@ -57,17 +57,7 @@ public class MainActivity extends Activity {
         recyclerView = findViewById(R.id.rvFeed);
         mContent = findViewById(R.id.content);
         setToolBar();
-        //Adapter test
 
-        ArrayList<Item> itm = new ArrayList<>();
-        itm.add(new Item(0, "test", 1, null, false));
-        itm.add(new Item(1, "test", 1, null, false));
-        itm.add(new Item(2, "test", 1, null, true));
-
-
-        adapter = new CustomItemAdapter(itm);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
 
         lastSelection = 1;
         updateListView(lastSelection);
@@ -79,7 +69,28 @@ public class MainActivity extends Activity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        TextView name = (TextView) dialog.findViewById(R.id.name);
+                        TextView qty = (TextView) dialog.findViewById(R.id.qty);
+                        TextView units = (TextView) dialog.findViewById(R.id.unit);
+                        if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
+                            long id = db.InsertItem(name.getText().toString(), qty.getText().toString(), lastSelection, units.getText().toString());
+                            updateListView(lastSelection);
+                            dialog.dismiss();
+                        } else {
+                            Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                }
+                ).autoDismiss(false).build();
+                dialog.show();
             }
         });
         fab.attachToRecyclerView(recyclerView);

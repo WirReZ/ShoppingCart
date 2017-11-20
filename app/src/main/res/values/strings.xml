@@ -20,5 +20,10 @@
     <string name="category_name">Category name</string>
     <string name="save">Save</string>
     <string name="empty_name">Category name is empty</string>
+    <string name="item_name">Name of item</string>
+    <string name="quantity_name">Qty</string>
+    <string name="unit_name">Unit</string>
+    <string name="drawer_add_item">Add Item</string>
+    <string name="missing_field">You have to fill every field</string>
 
 </resources>

@@ -24,12 +24,13 @@ public class Database extends SQLiteOpenHelper {
 
     // Items Table Columns names
 
-    String[] ItemEntryColumn = {ItemEntry._ID, ItemEntry.KEY_NAME, ItemEntry.KEY_CROSS};
+    String[] ItemEntryColumn = {ItemEntry._ID, ItemEntry.KEY_NAME, ItemEntry.KEY_CROSS,ItemEntry.KEY_COUNT,ItemEntry.KEY_UNIT};
 
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "Items";
         public static final String KEY_NAME = "name";
         public static final String KEY_COUNT = "count";
+        public static final String KEY_UNIT = "unit";
         public static final String KEY_CAT_ID = "categoryID";
         public static final String KEY_CROSS = "cross";
         public static final String KEY_ICON = "icon";
@@ -51,6 +52,7 @@ public class Database extends SQLiteOpenHelper {
                             ItemEntry._ID + " INTEGER PRIMARY KEY," +
                             ItemEntry.KEY_NAME + " TEXT," +
                             ItemEntry.KEY_COUNT + " TEXT," +
+                            ItemEntry.KEY_UNIT + " TEXT," +
                             ItemEntry.KEY_CROSS + " TEXT," +
                             ItemEntry.KEY_CAT_ID + " TEXT," +
                             ItemEntry.KEY_ICON + " TEXT)",
@@ -102,10 +104,11 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public long InsertItem(String name, String count, long catId) {
+    public long InsertItem(String name, String count, long catId,String unit) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ItemEntry.KEY_COUNT, count);
+        values.put(ItemEntry.KEY_UNIT, unit);
         values.put(ItemEntry.KEY_NAME, name);
         values.put(ItemEntry.KEY_CAT_ID, catId);
         long id = db.insert(ItemEntry.TABLE_NAME, null, values);
@@ -137,6 +140,7 @@ public class Database extends SQLiteOpenHelper {
             res.add(new Item(cur.getLong(cur.getColumnIndexOrThrow(ItemEntry._ID)),
                     cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME)),
                     cur.getInt(cur.getColumnIndex(ItemEntry.KEY_COUNT)),
+                    cur.getString(cur.getColumnIndex(ItemEntry.KEY_UNIT)),
                     null,
                     cur.getInt(cur.getColumnIndex(ItemEntry.KEY_CROSS)) > 0));
         }
