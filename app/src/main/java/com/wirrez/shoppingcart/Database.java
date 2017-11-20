@@ -24,6 +24,8 @@ public class Database extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "shoppingList.db";
 
     // Items Table Columns names
+
+    String [] ItemEntryColumn = {ItemEntry._ID,ItemEntry.KEY_NAME,ItemEntry.KEY_CROSS};
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "Items";
         public static final String KEY_NAME = "name";
@@ -119,10 +121,24 @@ public class Database extends SQLiteOpenHelper{
         db.close();
         return Items.toArray(new PrimaryDrawerItem[Items.size()]);
     }
-    // TODO make Custom Adapter
-    public List<CategoryItem> getItems(long id)
+    public ArrayList<Item> getItems( long id)
     {
-            return null;
+        ArrayList<Item> res = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur = db.query(ItemEntry.TABLE_NAME,ItemEntryColumn,ItemEntry.KEY_CAT_ID+"= ?",new String[]{String.valueOf(id)},null,null,null);
+
+        while(cur.moveToNext())
+        {
+            res.add( new Item( cur.getLong(cur.getColumnIndexOrThrow(ItemEntry._ID)),
+                               cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME)),
+                               cur.getInt(cur.getColumnIndex(ItemEntry.KEY_COUNT)),
+                              null,
+                    cur.getInt(cur.getColumnIndex(ItemEntry.KEY_CROSS))>0) );
+        }
+        cur.close();
+        db.close();
+        return res;
+
     }
     //Update
     public boolean updateCategory(long id, String title, Drawable icon)
