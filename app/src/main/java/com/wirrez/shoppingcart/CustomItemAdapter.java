@@ -1,15 +1,12 @@
 package com.wirrez.shoppingcart;
 
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -32,24 +29,24 @@ public class CustomItemAdapter extends RecyclerView.Adapter<CustomItemAdapter.Vi
             txtCount = (TextView) v.findViewById(R.id.count);
         }
     }
-    public CustomItemAdapter(ArrayList<Item> list)
-    {
+
+    public CustomItemAdapter(ArrayList<Item> list) {
         this.values = list;
     }
 
     @Override
     public CustomItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.row_item,parent,false);
+        View v = inflater.inflate(R.layout.row_item, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(CustomItemAdapter.ViewHolder holder, int position) {
-            final Item itm = values.get(position);
-            holder.txtName.setText(itm._name);
-            holder.txtCount.setText(String.valueOf(itm._count));
+        final Item itm = values.get(position);
+        holder.txtName.setText(itm._name);
+        holder.txtCount.setText(String.valueOf(itm._count) + " "+String.valueOf(itm._unit));
     }
 
     @Override

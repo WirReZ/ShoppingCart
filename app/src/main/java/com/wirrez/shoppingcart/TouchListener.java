@@ -11,13 +11,13 @@ import android.view.View;
  */
 
 
-
-public  class TouchListener implements RecyclerView.OnItemTouchListener {
+public class TouchListener implements RecyclerView.OnItemTouchListener {
     public interface ClickListener {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
     }
+
     private GestureDetector gestureDetector;
     private ClickListener clickListener;
 

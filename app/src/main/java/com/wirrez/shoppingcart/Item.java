@@ -6,17 +6,18 @@ package com.wirrez.shoppingcart;
  */
 
 public class Item {
-    int _id;
+    long _id;
     String _name;
     int _count;
+    String _unit;
     String _icon;
     Boolean _cross;
 
-    public Item(int id,String name,int count,String icon,Boolean cross)
-    {
+    public Item(long id, String name, int count,String unit, String icon, Boolean cross) {
         this._id = id;
         this._name = name;
         this._count = count;
+        this._unit = unit;
         this._icon = icon;
         this._cross = cross;
     }

@@ -1,16 +1,21 @@
 package com.wirrez.shoppingcart;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -27,40 +32,68 @@ import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class MainActivity extends Activity {
     private AccountHeader headerResult = null;
-    private  FlowingDrawer mDrawer =  null;
+    private FlowingDrawer mDrawer = null;
     private float ToolBarOffset;
     private boolean ToolBarFlipped;
-    private  DrawerArrowDrawable drawerArrowDrawable;
+    private DrawerArrowDrawable drawerArrowDrawable;
     private static CustomItemAdapter adapter;
     private RecyclerView recyclerView;
-
+    private Drawer DrawerMenu;
+    private long lastSelection;
+    private Database db;
+    private FlowingMenuLayout fml;
+    private CoordinatorLayout mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDrawer =  findViewById(R.id.drawerlayout);
-        FlowingMenuLayout fml =  findViewById(R.id.menulayout);
-        recyclerView=  findViewById(R.id.rvFeed);
+        mDrawer = findViewById(R.id.drawerlayout);
+        fml = findViewById(R.id.menulayout);
+        recyclerView = findViewById(R.id.rvFeed);
+        mContent = findViewById(R.id.content);
         setToolBar();
-        //Adapter test
 
-        ArrayList<Item> itm = new ArrayList<>();
-        itm.add(new Item(0,"test",1,null,false) );
-        itm.add(new Item(1,"test",1,null,false) );
-        itm.add(new Item(2,"test",1,null,true) );
 
+        lastSelection = 1;
+        updateListView(lastSelection);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
 
         recyclerView.setLayoutManager(mLayoutManager);
-        adapter = new CustomItemAdapter(itm);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
+        com.melnykov.fab.FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        TextView name = (TextView) dialog.findViewById(R.id.name);
+                        TextView qty = (TextView) dialog.findViewById(R.id.qty);
+                        TextView units = (TextView) dialog.findViewById(R.id.unit);
+                        if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
+                            long id = db.InsertItem(name.getText().toString(), qty.getText().toString(), lastSelection, units.getText().toString());
+                            updateListView(lastSelection);
+                            dialog.dismiss();
+                        } else {
+                            Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                }
+                ).autoDismiss(false).build();
+                dialog.show();
+            }
+        });
+        fab.attachToRecyclerView(recyclerView);
 
         recyclerView.addOnItemTouchListener(new TouchListener(getApplicationContext(), recyclerView, new TouchListener.ClickListener() {
             @Override
@@ -78,8 +111,8 @@ public class MainActivity extends Activity {
 
         // end of adapter test
 
-        Database db = new Database(this);
-      //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
+        db = new Database(this);
+        //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
 
         final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
 
@@ -91,7 +124,7 @@ public class MainActivity extends Activity {
                 .addProfiles(
                         profile,
                         new ProfileSettingDrawerItem().withName("Add Account").withDescription(R.string.drawer_add_user).withIcon(GoogleMaterial.Icon.gmd_account_add).withIdentifier(1)
-                       // new ProfileSettingDrawerItem().withName("Manage Account").withIcon(GoogleMaterial.Icon.gmd_settings)
+                        // new ProfileSettingDrawerItem().withName("Manage Account").withIcon(GoogleMaterial.Icon.gmd_settings)
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
@@ -99,7 +132,7 @@ public class MainActivity extends Activity {
                         //sample usage of the onProfileChanged listener
                         //if the clicked item has the identifier 1 add a new profile ;)
                         if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == 1) {
-                        //    IProfile newProfile = new ProfileDrawerItem().withNameShown(true).withName("Batman").withEmail("batman@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile5));
+                            //    IProfile newProfile = new ProfileDrawerItem().withNameShown(true).withName("Batman").withEmail("batman@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile5));
                           /*  if (headerResult.getProfiles() != null) {
                                 //we know that there are 2 setting elements. set the new profile above them ;)
                                 headerResult.addProfile(newProfile, headerResult.getProfiles().size() - 2);
@@ -115,7 +148,7 @@ public class MainActivity extends Activity {
                 .build();
 
 
-        Drawer result = new DrawerBuilder()
+        DrawerMenu = new DrawerBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
                 .withAccountHeader(headerResult) //set the AccountHeader we created earlier for the header
@@ -127,14 +160,38 @@ public class MainActivity extends Activity {
                         new SecondaryDrawerItem().withName(R.string.drawer_add_category).withIcon(GoogleMaterial.Icon.gmd_plus).withTag("add_category")).withStickyFooterShadow(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                    public boolean onItemClick(View view, int position, final IDrawerItem drawerItem) {
                         if (drawerItem instanceof Nameable) {
-                            if(drawerItem.getTag() == "add_category")
-                            {
+                            if (drawerItem.getTag() == "add_category") {
+                                mDrawer.closeMenu();
+                                MaterialDialog dialog = new AddCategoryActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        TextView name = (TextView) dialog.findViewById(R.id.name);
+                                        if (!name.getText().toString().isEmpty()) {
+                                            long id = db.InsertCategoryItem(name.getText().toString(), null);
+                                            DrawerMenu.removeAllItems();
+                                            DrawerMenu.addItems(db.GetCategoryItems());
+                                            if (id != 0) DrawerMenu.setSelection(id);
+                                            lastSelection = id;
+                                        } else {
+                                            Snackbar.make(mContent, R.string.empty_name, Snackbar.LENGTH_SHORT).show();
+                                            DrawerMenu.setSelection(lastSelection);
+                                        }
+                                    }
+                                }, new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialogInterface) {
+                                        DrawerMenu.setSelection(lastSelection);
+                                    }
+                                }).build();
 
+                                dialog.show();
+                            } else {
+                                lastSelection = drawerItem.getIdentifier();
+                                updateListView(lastSelection);
+                                mDrawer.closeMenu(true);
                             }
-                           Toast.makeText(MainActivity.this,String.valueOf(drawerItem.getIdentifier()),Toast.LENGTH_SHORT).show();
-                           // Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
                         }
                         return true;
                     }
@@ -143,11 +200,19 @@ public class MainActivity extends Activity {
                 .buildView();
 
         mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
-        fml.addView(result.getSlider());
-
+        fml.addView(DrawerMenu.getSlider());
     }
-    protected void setToolBar()
-    {
+
+    private void updateListView(long lastSelection) {
+        Database db = new Database(this);
+        ArrayList<Item> itm = db.getItems(lastSelection);
+        db.close();
+        adapter = new CustomItemAdapter(itm);
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
+    }
+
+    protected void setToolBar() {
         ImageView btnToolbar = (ImageView) findViewById(R.id.drawer_indicator);
         final Resources resources = getResources();
         drawerArrowDrawable = new DrawerArrowDrawable(resources);
@@ -155,16 +220,19 @@ public class MainActivity extends Activity {
 
         btnToolbar.setImageDrawable(drawerArrowDrawable);
         btnToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 mDrawer.toggleMenu();
             }
         });
         mDrawer.setOnDrawerStateChangeListener(new ElasticDrawer.OnDrawerStateChangeListener() {
             @Override
-            public void onDrawerStateChange(int oldState, int newState) {}
+            public void onDrawerStateChange(int oldState, int newState) {
+            }
+
             @Override
             public void onDrawerSlide(float openRatio, int offsetPixels) {
-                ToolBarOffset = (offsetPixels/300);
+                ToolBarOffset = (offsetPixels / 300);
                 if (ToolBarOffset >= .3) {
                     ToolBarFlipped = true;
                     drawerArrowDrawable.setFlip(ToolBarFlipped);
@@ -172,7 +240,7 @@ public class MainActivity extends Activity {
                     ToolBarFlipped = false;
                     drawerArrowDrawable.setFlip(ToolBarFlipped);
                 }
-                if(ToolBarOffset>1)ToolBarOffset=1;
+                if (ToolBarOffset > 1) ToolBarOffset = 1;
                 drawerArrowDrawable.setParameter(ToolBarOffset);
 
             }
