@@ -12,8 +12,7 @@ public class Item {
     String _icon;
     Boolean _cross;
 
-    public Item(long id,String name,int count,String icon,Boolean cross)
-    {
+    public Item(long id, String name, int count, String icon, Boolean cross) {
         this._id = id;
         this._name = name;
         this._count = count;
