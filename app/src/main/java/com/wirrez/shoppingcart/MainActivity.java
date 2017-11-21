@@ -60,7 +60,6 @@ public class MainActivity extends Activity {
         mContent = findViewById(R.id.content);
         setToolBar();
 
-
         lastSelection = 1;
         updateListView(lastSelection);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -70,29 +69,36 @@ public class MainActivity extends Activity {
         com.melnykov.fab.FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        TextView name = (TextView) dialog.findViewById(R.id.name);
-                        TextView qty = (TextView) dialog.findViewById(R.id.qty);
-                        TextView units = (TextView) dialog.findViewById(R.id.unit);
-                        if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
-                            long id = db.InsertItem(name.getText().toString(), qty.getText().toString(), lastSelection, units.getText().toString());
-                            updateListView(lastSelection);
+            public void onClick(View view) { // TODO fix show error if no category selected
+                if(lastSelection == 0)Snackbar.make(mContent, R.string.select_category, Snackbar.LENGTH_SHORT).show();
+                else
+                {
+                    MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            TextView name = (TextView) dialog.findViewById(R.id.name);
+                            TextView qty = (TextView) dialog.findViewById(R.id.qty);
+                            TextView units = (TextView) dialog.findViewById(R.id.unit);
+                            if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
+                                long id = db.InsertItem(name.getText().toString(), qty.getText().toString(), lastSelection, units.getText().toString());
+                                DrawerMenu.removeAllItems();
+                                DrawerMenu.addItems(db.GetCategoryItems());
+                                DrawerMenu.setSelection(lastSelection);
+                                updateListView(lastSelection);
+                                dialog.dismiss();
+                            } else {
+                                Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                    }, new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             dialog.dismiss();
-                        } else {
-                            Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
                         }
                     }
-                }, new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
+                    ).autoDismiss(false).build();
+                    dialog.show();
                 }
-                ).autoDismiss(false).build();
-                dialog.show();
             }
         });
         fab.attachToRecyclerView(recyclerView);
@@ -126,6 +132,9 @@ public class MainActivity extends Activity {
                                                 if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
                                                     boolean id = db.updateItem(itmPosition._id,name.getText().toString(), qty.getText().toString(),  units.getText().toString());
                                                     updateListView(lastSelection);
+                                                    DrawerMenu.removeAllItems();
+                                                    DrawerMenu.addItems(db.GetCategoryItems());
+                                                    DrawerMenu.setSelection(lastSelection);
                                                     dialog.dismiss();
                                                 } else {
                                                     Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
@@ -151,11 +160,15 @@ public class MainActivity extends Activity {
                                         boolean ok = db.deleteItem(itmPosition._id);
                                         if(ok) Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).show();
                                         else   Snackbar.make(mContent, R.string.item_deleted_error, Snackbar.LENGTH_SHORT).show();
+
                                         break;
                                     }
                                 }
+                                DrawerMenu.removeAllItems();
+                                DrawerMenu.addItems(db.GetCategoryItems());
+                                DrawerMenu.setSelection(lastSelection);
                                 updateListView(lastSelection);
-                                Log.d("TESTING",String.valueOf(which));
+
                             }
                         })
                         .show();
@@ -167,7 +180,6 @@ public class MainActivity extends Activity {
         // end of adapter test
 
         db = new Database(this);
-        //  Log.d("Test",String.valueOf(db.InsertCategoryItem("Name")));
 
         final IProfile profile = new ProfileDrawerItem().withName("Daniel Walter").withEmail("wirrez@gmail.com").withIcon("https://scontent.fprg1-1.fna.fbcdn.net/v/t31.0-8/21246324_1874906015858663_4452075831135471016_o.jpg?oh=306fa2321ea7a61274e3e8a02ffc4674&oe=5AA9020F");
 
@@ -213,6 +225,62 @@ public class MainActivity extends Activity {
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem().withName(R.string.drawer_settings).withIcon(GoogleMaterial.Icon.gmd_settings).withTag("settings"),
                         new SecondaryDrawerItem().withName(R.string.drawer_add_category).withIcon(GoogleMaterial.Icon.gmd_plus).withTag("add_category")).withStickyFooterShadow(false)
+                .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(View view, int position, final IDrawerItem drawerItem) {
+                        new MaterialDialog.Builder(MainActivity.this)
+                                .title(R.string.edit_category)
+                                .items(R.array.category_choice)
+                                .itemsCallback(new MaterialDialog.ListCallback() {
+                                    @Override
+                                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                        switch (position)
+                                        {
+                                            case 0: {
+                                                final long id = drawerItem.getIdentifier();
+                                                MaterialDialog dialogEdit = new EditCategoryActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        TextView name = (TextView) dialog.findViewById(R.id.name);
+                                                        if (!name.getText().toString().isEmpty()) {
+                                                            boolean ok = db.updateCategory(id,name.getText().toString(),null);
+                                                            DrawerMenu.removeAllItems();
+                                                            DrawerMenu.addItems(db.GetCategoryItems());
+                                                            DrawerMenu.setSelection(lastSelection);
+                                                            dialog.dismiss();
+                                                        } else {
+                                                            Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                }, new MaterialDialog.SingleButtonCallback() {
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                }).autoDismiss(false).build();
+
+                                                EditText name  = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
+                                                name.setText(String.valueOf(drawerItem.getTag()));
+                                                dialogEdit.show();
+                                                break;
+                                            }
+                                            case 1: {
+                                                long id = db.deleteCategory(drawerItem.getIdentifier());
+                                                DrawerMenu.removeAllItems();
+                                                DrawerMenu.addItems(db.GetCategoryItems());
+                                                if (id != 0) {
+                                                    DrawerMenu.setSelection(id);
+                                                    lastSelection = id;
+                                                    updateListView(lastSelection);
+                                                }else mDrawer.closeMenu(true);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }).show();
+                        return true;
+                    }
+                })
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, final IDrawerItem drawerItem) {
@@ -259,6 +327,7 @@ public class MainActivity extends Activity {
     }
 
     private void updateListView(long lastSelection) {
+
         Database db = new Database(this);
         ArrayList<Item> itm = db.getItems(lastSelection);
         db.close();

@@ -2,7 +2,7 @@ package com.wirrez.shoppingcart;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.widget.EditText;
+
 
 import com.afollestad.materialdialogs.MaterialDialog;
 

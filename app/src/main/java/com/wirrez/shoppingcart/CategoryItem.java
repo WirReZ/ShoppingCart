@@ -20,7 +20,7 @@ public class CategoryItem {
     }
 
     public PrimaryDrawerItem getPrimaryDrawer() {
-        return new PrimaryDrawerItem().withName(this._name).withIcon(this._icon).withIdentifier(this._id);
+        return new PrimaryDrawerItem().withName(this._name).withIcon(this._icon).withIdentifier(this._id).withTag(this._name);
     }
 
 }

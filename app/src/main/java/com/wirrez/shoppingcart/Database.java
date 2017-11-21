@@ -125,7 +125,8 @@ public class Database extends SQLiteOpenHelper {
         List<PrimaryDrawerItem> Items = new ArrayList<>();
 
         while (cur.moveToNext()) {
-            Items.add(new CategoryItem(cur.getLong(cur.getColumnIndexOrThrow(CategoryItemEntry._ID)), cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_NAME)), null).getPrimaryDrawer());
+            long id = cur.getLong(cur.getColumnIndexOrThrow(CategoryItemEntry._ID));
+            Items.add(new CategoryItem(id, cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_NAME))+" ("+getCountItemsOfCategory(id)+")", null).getPrimaryDrawer());
         }
 
         cur.close();
@@ -181,13 +182,30 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Delete
-    public boolean deleteCategory(long id) {
+    public long deleteCategory(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         int deleteCountItems = db.delete(ItemEntry.TABLE_NAME, ItemEntry.KEY_CAT_ID + "=?", new String[]{String.valueOf(id)});
         int deleteCount = db.delete(CategoryItemEntry.TABLE_NAME, CategoryItemEntry._ID + "=?", new String[]{String.valueOf(id)});
 
         db.close();
-        return deleteCount > 0;
+        if(deleteCount > 0)
+        {
+            long retId;
+            //find first Id
+            db = this.getReadableDatabase();
+            Cursor cur = db.query(CategoryItemEntry.TABLE_NAME, CategoryItemEntryColumn, null, null, null, null, null);
+            cur.moveToFirst();
+            try
+            {
+                retId = cur.getLong(cur.getColumnIndexOrThrow(CategoryItemEntry._ID));
+            }catch (Exception e)
+            {
+                retId = 0;
+            }
+            cur.close();
+            db.close();
+            return retId;
+        }return id;
 
     }
 

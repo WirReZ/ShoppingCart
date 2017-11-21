@@ -29,5 +29,8 @@
     <string name="item_deleted">Item was deleted</string>
     <string name="item_deleted_error">Cannot delete item</string>
     <string name="drawer_edit_item">Edit item</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="select_category">You have to select category</string>
+    <string name="drawer_edit_category">Edit category</string>
 
 </resources>
