@@ -1,12 +1,22 @@
 package com.wirrez.shoppingcart;
 
-import android.app.Activity;
-import android.os.Bundle;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.widget.EditText;
 
-public class EditItemActivity extends Activity {
+import com.afollestad.materialdialogs.MaterialDialog;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+public class EditItemActivity extends MaterialDialog.Builder  {
+
+    public EditItemActivity(@NonNull Context context, MaterialDialog.SingleButtonCallback posCallBack, MaterialDialog.SingleButtonCallback negCallBack) {
+        super(context);
+
+        this.title(R.string.drawer_edit_item)
+                .customView(R.layout.edit_item, true)
+                .positiveText(R.string.save)
+                .negativeText(R.string.cancel)
+                .onPositive(posCallBack).onNegative(negCallBack);
+
+
     }
 }

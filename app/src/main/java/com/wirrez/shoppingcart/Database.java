@@ -26,6 +26,8 @@ public class Database extends SQLiteOpenHelper {
 
     String[] ItemEntryColumn = {ItemEntry._ID, ItemEntry.KEY_NAME, ItemEntry.KEY_CROSS,ItemEntry.KEY_COUNT,ItemEntry.KEY_UNIT};
 
+
+
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "Items";
         public static final String KEY_NAME = "name";
@@ -163,14 +165,14 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return (result == 1);
     }
-
-    public boolean updateItem(long id, int count, int Name) {
-        SQLiteDatabase db = this.getReadableDatabase();
+    public boolean updateItem(long id, String name, String qty,String units) { // todo auto complete edit
+        SQLiteDatabase db = this.getWritableDatabase();
         int result;
         ContentValues values = new ContentValues();
 
-        values.put(ItemEntry.KEY_NAME, Name);
-        values.put(ItemEntry.KEY_COUNT, count);
+        values.put(ItemEntry.KEY_NAME, name);
+        values.put(ItemEntry.KEY_COUNT, qty);
+        values.put(ItemEntry.KEY_UNIT, units);
 
         result = db.update(ItemEntry.TABLE_NAME, values, ItemEntry._ID + " = ?", new String[]{String.valueOf(id)});
 
@@ -208,15 +210,18 @@ public class Database extends SQLiteOpenHelper {
         return count;
     }
 
-    public boolean crossItem(long id, boolean cross) {
-        SQLiteDatabase db = this.getReadableDatabase();
+    public boolean crossItem(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
         int result;
+        Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
+        cur.moveToFirst();
+        boolean cross = cur.getInt( cur.getColumnIndex(ItemEntry.KEY_CROSS) ) > 0  ;
 
+        cur.close();
         ContentValues values = new ContentValues();
-        values.put(ItemEntry.KEY_CROSS, cross);
+        values.put(ItemEntry.KEY_CROSS, !cross);
 
         result = db.update(ItemEntry.TABLE_NAME, values, ItemEntry._ID + " = ?", new String[]{String.valueOf(id)});
-
         db.close();
         return (result == 1);
 

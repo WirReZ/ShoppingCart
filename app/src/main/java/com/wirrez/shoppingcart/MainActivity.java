@@ -9,7 +9,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,13 +99,66 @@ public class MainActivity extends Activity {
 
         recyclerView.addOnItemTouchListener(new TouchListener(getApplicationContext(), recyclerView, new TouchListener.ClickListener() {
             @Override
-            public void onClick(View view, int position) { // TODO
-                Toast.makeText(getApplicationContext(), "selected", Toast.LENGTH_SHORT).show();
+            public void onClick(View view, int position) {
+                CustomItemAdapter.ViewHolder itmPosition = (CustomItemAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                db.crossItem(itmPosition._id);
+                updateListView(lastSelection);
             }
-
             @Override
-            public void onLongClick(View view, int position) { // TODO
-                Toast.makeText(getApplicationContext(), "selected show menu", Toast.LENGTH_SHORT).show();
+            public void onLongClick(View view, int position) {
+                 final CustomItemAdapter.ViewHolder itmPosition = (CustomItemAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+
+                new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.edit_item)
+                        .items(R.array.item_choice)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                switch (which)
+                                {
+                                    case 0: {
+                                        MaterialDialog dialogEdit = new EditItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                TextView name = (TextView) dialog.findViewById(R.id.name);
+                                                TextView qty = (TextView) dialog.findViewById(R.id.qty);
+                                                TextView units = (TextView) dialog.findViewById(R.id.unit);
+                                                if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
+                                                    boolean id = db.updateItem(itmPosition._id,name.getText().toString(), qty.getText().toString(),  units.getText().toString());
+                                                    updateListView(lastSelection);
+                                                    dialog.dismiss();
+                                                } else {
+                                                    Snackbar.make(mContent, R.string.missing_field, Snackbar.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }, new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).autoDismiss(false).build();
+
+                                        EditText name  = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
+                                        EditText qty  = (EditText) dialogEdit.getCustomView().findViewById(R.id.qty);
+                                        EditText unit  = (EditText) dialogEdit.getCustomView().findViewById(R.id.unit);
+                                        name.setText(itmPosition._name);
+                                        qty.setText(String.valueOf(itmPosition._qty));
+                                        unit.setText(itmPosition._unit);
+                                        dialogEdit.show();
+                                        break;
+                                    }
+                                    case 1: {
+                                        boolean ok = db.deleteItem(itmPosition._id);
+                                        if(ok) Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).show();
+                                        else   Snackbar.make(mContent, R.string.item_deleted_error, Snackbar.LENGTH_SHORT).show();
+                                        break;
+                                    }
+                                }
+                                updateListView(lastSelection);
+                                Log.d("TESTING",String.valueOf(which));
+                            }
+                        })
+                        .show();
             }
         }));
 

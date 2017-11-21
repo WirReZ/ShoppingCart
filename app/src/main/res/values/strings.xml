@@ -25,5 +25,9 @@
     <string name="unit_name">Unit</string>
     <string name="drawer_add_item">Add Item</string>
     <string name="missing_field">You have to fill every field</string>
+    <string name="edit_item">Edit item</string>
+    <string name="item_deleted">Item was deleted</string>
+    <string name="item_deleted_error">Cannot delete item</string>
+    <string name="drawer_edit_item">Edit item</string>
 
 </resources>
