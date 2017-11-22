@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.tbouron.shakedetector.library.ShakeDetector;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -324,10 +325,23 @@ public class MainActivity extends Activity {
 
         mDrawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
         fml.addView(DrawerMenu.getSlider());
+        //Shake detection
+        ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
+            @Override
+            public void OnShake()
+            {
+                    db.cleanCrossed(lastSelection);
+                    DrawerMenu.removeAllItems();
+                    DrawerMenu.addItems(db.GetCategoryItems());
+                    DrawerMenu.setSelection(lastSelection);
+                    updateListView(lastSelection);
+            }
+        });
+
+
     }
 
     private void updateListView(long lastSelection) {
-
         Database db = new Database(this);
         ArrayList<Item> itm = db.getItems(lastSelection);
         db.close();
@@ -369,5 +383,20 @@ public class MainActivity extends Activity {
 
             }
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ShakeDetector.start();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ShakeDetector.stop();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ShakeDetector.destroy();
     }
 }

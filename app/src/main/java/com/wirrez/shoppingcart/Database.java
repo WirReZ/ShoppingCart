@@ -28,6 +28,7 @@ public class Database extends SQLiteOpenHelper {
 
 
 
+
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "Items";
         public static final String KEY_NAME = "name";
@@ -215,6 +216,11 @@ public class Database extends SQLiteOpenHelper {
         int deleteCount = db.delete(ItemEntry.TABLE_NAME, ItemEntry._ID + "=?", new String[]{String.valueOf(id)});
         db.close();
         return deleteCount > 0;
+    }
+    public void cleanCrossed(long lastSelection) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            int deleteCount = db.delete(ItemEntry.TABLE_NAME,ItemEntry.KEY_CAT_ID + "=? and  "+ItemEntry.KEY_CROSS+ "!= 0",new String[]{String.valueOf(lastSelection)});
+            db.close();
     }
 
     //Other
