@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -77,9 +80,13 @@ public class MainActivity extends Activity {
                     MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            TextView name = (TextView) dialog.findViewById(R.id.name);
+                            AutoCompleteTextView name = (AutoCompleteTextView) dialog.findViewById(R.id.name);
                             TextView qty = (TextView) dialog.findViewById(R.id.qty);
-                            TextView units = (TextView) dialog.findViewById(R.id.unit);
+                            AutoCompleteTextView units = (AutoCompleteTextView) dialog.findViewById(R.id.unit);
+
+
+
+
                             if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
                                 long id = db.InsertItem(name.getText().toString(), qty.getText().toString(), lastSelection, units.getText().toString());
                                 DrawerMenu.removeAllItems();
@@ -309,7 +316,6 @@ public class MainActivity extends Activity {
                                         DrawerMenu.setSelection(lastSelection);
                                     }
                                 }).build();
-
                                 dialog.show();
                             } else {
                                 lastSelection = drawerItem.getIdentifier();
