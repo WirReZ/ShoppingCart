@@ -172,6 +172,17 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return Items.toArray(new PrimaryDrawerItem[Items.size()]);
     }
+    public long getFirstCategoryID() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cur = db.query(CategoryItemEntry.TABLE_NAME, CategoryItemEntryColumn, null, null, null, null, null);
+            cur.moveToFirst();
+            try{
+                return cur.getLong(cur.getColumnIndex(CategoryItemEntry._ID));
+            }catch (Exception e)
+            {
+                return 1;
+            }
+    }
 
     public ArrayList<Item> getItems(long id) {
         ArrayList<Item> res = new ArrayList<>();
@@ -271,7 +282,7 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    //Remove from autocomplete too TODO remove from autocomplete
+    //Remove from autocomplete
     public boolean deleteItem(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);

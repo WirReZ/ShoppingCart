@@ -35,5 +35,11 @@
     <string name="select_img">Select image</string>
     <string name="recovered">Item was recovered</string>
     <string name="category_deleted">Category was deleted</string>
+    <string name="downloadXML">Download xml file</string>
+    <string name="numShake">Number of shakes</string>
+    <string name="pref_shake">Shake settings</string>
+    <string name="pref_backup">Backup</string>
+    <string name="shakeSensitivity">Sensitivity of shake detection</string>
+    <string name="uploadXML">Upload XML</string>
 
 </resources>
