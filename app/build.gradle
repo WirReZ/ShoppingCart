@@ -29,6 +29,8 @@ dependencies {
         transitive = true
     }
     compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
+    compile "com.mikepenz:iconics-core:2.8.1@aar"
+    implementation "com.mikepenz:iconics-views:3.0.0@aar"
     compile 'com.mikepenz:fontawesome-typeface:4.7.0.0@aar'
     compile 'com.mikepenz:octicons-typeface:3.0.0.1@aar'
 

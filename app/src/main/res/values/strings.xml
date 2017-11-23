@@ -32,5 +32,8 @@
     <string name="edit_category">Edit Category</string>
     <string name="select_category">You have to select category</string>
     <string name="drawer_edit_category">Edit category</string>
+    <string name="select_img">Select image</string>
+    <string name="recovered">Item was recovered</string>
+    <string name="category_deleted">Category was deleted</string>
 
 </resources>

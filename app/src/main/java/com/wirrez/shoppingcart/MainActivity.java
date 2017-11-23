@@ -38,6 +38,7 @@ import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -73,8 +74,8 @@ public class MainActivity extends Activity {
         com.melnykov.fab.FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { // TODO fix show error if no category selected
-                if(lastSelection == 0)Snackbar.make(mContent, R.string.select_category, Snackbar.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                if(DrawerMenu.getCurrentSelection() == -1 || db.GetCategoryItems().length == 0)Snackbar.make(mContent, R.string.select_category, Snackbar.LENGTH_SHORT).show();
                 else
                 {
                     MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
@@ -166,9 +167,18 @@ public class MainActivity extends Activity {
                                     }
                                     case 1: {
                                         boolean ok = db.deleteItem(itmPosition._id);
-                                        if(ok) Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).show();
+                                        if(ok) Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).setAction("Undo", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                db.InsertItem(itmPosition._name,String.valueOf(itmPosition._qty),lastSelection,itmPosition._unit);
+                                                Toast.makeText(MainActivity.this,R.string.recovered,Toast.LENGTH_SHORT).show();
+                                                DrawerMenu.removeAllItems();
+                                                DrawerMenu.addItems(db.GetCategoryItems());
+                                                DrawerMenu.setSelection(lastSelection);
+                                                updateListView(lastSelection);
+                                            }
+                                        }).show();
                                         else   Snackbar.make(mContent, R.string.item_deleted_error, Snackbar.LENGTH_SHORT).show();
-
                                         break;
                                     }
                                 }
@@ -272,15 +282,34 @@ public class MainActivity extends Activity {
                                                 dialogEdit.show();
                                                 break;
                                             }
-                                            case 1: {
+                                            case 1: { // TODO
+                                                final String name = drawerItem.getTag().toString();
+                                                final ArrayList<Item> items = db.getItems(drawerItem.getIdentifier());
                                                 long id = db.deleteCategory(drawerItem.getIdentifier());
                                                 DrawerMenu.removeAllItems();
                                                 DrawerMenu.addItems(db.GetCategoryItems());
                                                 if (id != 0) {
                                                     DrawerMenu.setSelection(id);
                                                     lastSelection = id;
-                                                    updateListView(lastSelection);
-                                                }else mDrawer.closeMenu(true);
+                                                }
+                                                updateListView(lastSelection);
+                                                mDrawer.closeMenu(true);
+                                                Snackbar.make(mContent, R.string.category_deleted, Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                        Toast.makeText(MainActivity.this,R.string.recovered,Toast.LENGTH_SHORT).show();
+                                                        lastSelection = db.InsertCategoryItem(name,null);
+                                                        for(Item obj : items)
+                                                        {
+                                                            db.InsertItem(obj._name,String.valueOf(obj._count),lastSelection,obj._unit);
+                                                        }
+                                                        DrawerMenu.removeAllItems();
+                                                        DrawerMenu.addItems(db.GetCategoryItems());
+                                                        DrawerMenu.setSelection(lastSelection);
+                                                        updateListView(lastSelection);
+                                                    }
+                                                }).show();
                                                 break;
                                             }
                                         }
@@ -305,6 +334,7 @@ public class MainActivity extends Activity {
                                             DrawerMenu.addItems(db.GetCategoryItems());
                                             if (id != 0) DrawerMenu.setSelection(id);
                                             lastSelection = id;
+
                                         } else {
                                             Snackbar.make(mContent, R.string.empty_name, Snackbar.LENGTH_SHORT).show();
                                             DrawerMenu.setSelection(lastSelection);
