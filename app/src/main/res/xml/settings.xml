@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sample="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_shake" >
+        <EditTextPreference
+            android:key="numShake"
+            android:title="@string/numShake"
+            android:inputType="numberSigned"
+            android:persistent="true"
+            android:defaultValue="2" />
+
+        <com.pavelsikun.seekbarpreference.SeekBarPreference
+            android:defaultValue="6"
+            android:enabled="true"
+            android:key="sensitivityShake"
+            android:title="@string/shakeSensitivity"
+            sample:msbp_interval="1"
+            sample:msbp_maxValue="100"
+            sample:msbp_minValue="10" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_backup" >
+    <Preference android:title="@string/downloadXML"
+        android:key="downloadXML"
+        android:summary="Download xml file of my shopping list"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
