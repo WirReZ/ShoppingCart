@@ -2,7 +2,6 @@ package com.wirrez.shoppingcart;
 
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,14 +51,13 @@ public class CustomItemAdapter extends RecyclerView.Adapter<CustomItemAdapter.Vi
     public void onBindViewHolder(CustomItemAdapter.ViewHolder holder, int position) {
         final Item itm = values.get(position);
         holder.txtName.setText(itm._name);
-        holder.txtCount.setText(String.valueOf(itm._count) + " "+String.valueOf(itm._unit));
+        holder.txtCount.setText(String.valueOf(itm._count) + " " + String.valueOf(itm._unit));
         holder._id = itm._id;
         holder._qty = itm._count;
         holder._unit = itm._unit;
         holder._name = itm._name;
         holder._id = itm._id;
-        if(itm._cross)
-        {
+        if (itm._cross) {
             holder.txtName.setPaintFlags(holder.txtName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG);
             holder.txtCount.setPaintFlags(holder.txtName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }

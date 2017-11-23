@@ -2,14 +2,11 @@ package com.wirrez.shoppingcart;
 
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -22,8 +19,8 @@ public class AddItemActivity extends MaterialDialog.Builder {
         AutoCompleteTextView name = (AutoCompleteTextView) contv.findViewById(R.id.name);
         AutoCompleteTextView units = (AutoCompleteTextView) contv.findViewById(R.id.unit);
         Database db = new Database(context);
-        ArrayAdapter<String> adapterUsedItems = new ArrayAdapter<String>(context,android.R.layout.select_dialog_item,db.getUsedItems());
-        ArrayAdapter<String> adapterUsedUnits = new ArrayAdapter<String>(context,android.R.layout.select_dialog_item,db.getUsedUnits());
+        ArrayAdapter<String> adapterUsedItems = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item, db.getUsedItems());
+        ArrayAdapter<String> adapterUsedUnits = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item, db.getUsedUnits());
         name.setThreshold(1);
         units.setThreshold(1);
         name.setAdapter(adapterUsedItems);

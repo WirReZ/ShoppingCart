@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.drawable.Drawable;
 import android.provider.BaseColumns;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -27,19 +25,22 @@ public class Database extends SQLiteOpenHelper {
 
     // Used Items
     String[] UsedItemsEntryColumn = {UsedItemsEntry._ID, UsedItemsEntry.KEY_NAME};
+
     public static class UsedItemsEntry implements BaseColumns {
         public static final String TABLE_NAME = "UsedItems";
         public static final String KEY_NAME = "name";
     }
+
     // Used units
     String[] UsedUnitsEntryColumn = {UsedUnitsEntry._ID, UsedUnitsEntry.KEY_NAME};
+
     public static class UsedUnitsEntry implements BaseColumns {
         public static final String TABLE_NAME = "UsedUnits";
         public static final String KEY_NAME = "name";
     }
 
     // Items Table Columns names
-    String[] ItemEntryColumn = {ItemEntry._ID, ItemEntry.KEY_NAME, ItemEntry.KEY_CROSS,ItemEntry.KEY_COUNT,ItemEntry.KEY_UNIT};
+    String[] ItemEntryColumn = {ItemEntry._ID, ItemEntry.KEY_NAME, ItemEntry.KEY_CROSS, ItemEntry.KEY_COUNT, ItemEntry.KEY_UNIT};
 
     public static class ItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "Items";
@@ -53,6 +54,7 @@ public class Database extends SQLiteOpenHelper {
 
     // Category Items Table Columns names
     String[] CategoryItemEntryColumn = {CategoryItemEntry._ID, CategoryItemEntry.KEY_NAME, CategoryItemEntry.KEY_ICON};
+
     public static class CategoryItemEntry implements BaseColumns {
         public static final String TABLE_NAME = "CategoryItems";
         public static final String KEY_NAME = "name";
@@ -122,14 +124,14 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(CategoryItemEntry.KEY_NAME, name);
 //        values.put(CategoryItemEntry.KEY_ICON, icon.getName()); // TODO
-        values.put(CategoryItemEntry.KEY_ICON,""); // TODO
+        values.put(CategoryItemEntry.KEY_ICON, ""); // TODO
         long id = db.insert(CategoryItemEntry.TABLE_NAME, null, values);
         db.close();
         return id;
     }
 
-    public long InsertItem(String name, String count, long catId,String unit) {
-        this.removeUsed(name,unit);
+    public long InsertItem(String name, String count, long catId, String unit) {
+        this.removeUsed(name, unit);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ItemEntry.KEY_COUNT, count);
@@ -159,12 +161,11 @@ public class Database extends SQLiteOpenHelper {
             long id = cur.getLong(cur.getColumnIndexOrThrow(CategoryItemEntry._ID));
             String valueIcon = cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_ICON));
             GoogleMaterial.Icon icon = null;
-            if(!valueIcon.isEmpty())
-            {
+            if (!valueIcon.isEmpty()) {
                 icon = GoogleMaterial.Icon.valueOf(valueIcon);
             }
             Items.add(new CategoryItem(id, cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_NAME)),
-                    icon,getCountItemsOfCategory(id)).getPrimaryDrawer());
+                    icon, getCountItemsOfCategory(id)).getPrimaryDrawer());
         }
 
         cur.close();
@@ -204,18 +205,19 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return (result == 1);
     }
-    public boolean updateItem(long id, String name, String qty,String units) {
+
+    public boolean updateItem(long id, String name, String qty, String units) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         cur.moveToFirst();
-        String OldName= cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME));
-        String OldUnit=  cur.getString(cur.getColumnIndex(ItemEntry.KEY_UNIT));
+        String OldName = cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME));
+        String OldUnit = cur.getString(cur.getColumnIndex(ItemEntry.KEY_UNIT));
         cur.close();
         db.close();
-        this.removeUsed(OldName,OldUnit);
+        this.removeUsed(OldName, OldUnit);
 
-         db = this.getWritableDatabase();
+        db = this.getWritableDatabase();
         int result;
         ContentValues values = new ContentValues();
         values.put(ItemEntry.KEY_NAME, name);
@@ -243,52 +245,52 @@ public class Database extends SQLiteOpenHelper {
         int deleteCount = db.delete(CategoryItemEntry.TABLE_NAME, CategoryItemEntry._ID + "=?", new String[]{String.valueOf(id)});
 
         db.close();
-        if(deleteCount > 0)
-        {
+        if (deleteCount > 0) {
             long retId;
             //find first Id
             db = this.getReadableDatabase();
             Cursor cur = db.query(CategoryItemEntry.TABLE_NAME, CategoryItemEntryColumn, null, null, null, null, null);
             cur.moveToFirst();
-            try
-            {
+            try {
                 retId = cur.getLong(cur.getColumnIndexOrThrow(CategoryItemEntry._ID));
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 retId = 0;
             }
             cur.close();
             db.close();
             return retId;
-        }return id;
+        }
+        return id;
 
     }
-    public void removeUsed(String item,String unit)
-    {
+
+    public void removeUsed(String item, String unit) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(UsedItemsEntry.TABLE_NAME,UsedItemsEntry.KEY_NAME + "=?",new String[] { item });
-        db.delete(UsedUnitsEntry.TABLE_NAME,UsedUnitsEntry.KEY_NAME + "=?",new String[] { unit });
+        db.delete(UsedItemsEntry.TABLE_NAME, UsedItemsEntry.KEY_NAME + "=?", new String[]{item});
+        db.delete(UsedUnitsEntry.TABLE_NAME, UsedUnitsEntry.KEY_NAME + "=?", new String[]{unit});
         db.close();
     }
+
     //Remove from autocomplete too TODO remove from autocomplete
     public boolean deleteItem(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         cur.moveToFirst();
-        String name= cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME));
-        String unit=  cur.getString(cur.getColumnIndex(ItemEntry.KEY_UNIT));
+        String name = cur.getString(cur.getColumnIndex(ItemEntry.KEY_NAME));
+        String unit = cur.getString(cur.getColumnIndex(ItemEntry.KEY_UNIT));
         cur.close();
         int deleteCount = db.delete(ItemEntry.TABLE_NAME, ItemEntry._ID + "=?", new String[]{String.valueOf(id)});
         db.close();
 
-        this.removeUsed(name,unit);
+        this.removeUsed(name, unit);
 
         return deleteCount > 0;
     }
+
     public void cleanCrossed(long lastSelection) {
-            SQLiteDatabase db = this.getWritableDatabase();
-            int deleteCount = db.delete(ItemEntry.TABLE_NAME,ItemEntry.KEY_CAT_ID + "=? and  "+ItemEntry.KEY_CROSS+ "!= 0",new String[]{String.valueOf(lastSelection)});
-            db.close();
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deleteCount = db.delete(ItemEntry.TABLE_NAME, ItemEntry.KEY_CAT_ID + "=? and  " + ItemEntry.KEY_CROSS + "!= 0", new String[]{String.valueOf(lastSelection)});
+        db.close();
     }
 
     //Other
@@ -307,7 +309,7 @@ public class Database extends SQLiteOpenHelper {
         int result;
         Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         cur.moveToFirst();
-        boolean cross = cur.getInt( cur.getColumnIndex(ItemEntry.KEY_CROSS) ) > 0  ;
+        boolean cross = cur.getInt(cur.getColumnIndex(ItemEntry.KEY_CROSS)) > 0;
 
         cur.close();
         ContentValues values = new ContentValues();
@@ -332,6 +334,7 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return values;
     }
+
     public String[] getUsedItems() {
         ArrayList<String> values = new ArrayList<>();
 

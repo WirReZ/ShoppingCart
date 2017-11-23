@@ -1,18 +1,13 @@
 package com.wirrez.shoppingcart;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.support.annotation.ArrayRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.view.IconicsImageView;
 
 /**
@@ -45,7 +40,7 @@ class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
     @Override
     public void onBindViewHolder(ButtonVH holder, int position) {
         holder.title.setText(items[position].toString());
-       // holder.icon.setIcon( items[position] );
+        // holder.icon.setIcon( items[position] );
     }
 
     @Override
@@ -78,7 +73,7 @@ class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
             if (adapter.itemCallback == null) {
                 return;
             }
-             adapter.itemCallback.onItemClicked(getAdapterPosition());
+            adapter.itemCallback.onItemClicked(getAdapterPosition());
 
         }
     }

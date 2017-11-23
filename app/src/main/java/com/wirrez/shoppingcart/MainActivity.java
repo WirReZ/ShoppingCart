@@ -9,9 +9,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,9 +34,7 @@ import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingMenuLayout;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -75,17 +71,15 @@ public class MainActivity extends Activity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(DrawerMenu.getCurrentSelection() == -1 || db.GetCategoryItems().length == 0)Snackbar.make(mContent, R.string.select_category, Snackbar.LENGTH_SHORT).show();
-                else
-                {
+                if (DrawerMenu.getCurrentSelection() == -1 || db.GetCategoryItems().length == 0)
+                    Snackbar.make(mContent, R.string.select_category, Snackbar.LENGTH_SHORT).show();
+                else {
                     MaterialDialog dialog = new AddItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             AutoCompleteTextView name = (AutoCompleteTextView) dialog.findViewById(R.id.name);
                             TextView qty = (TextView) dialog.findViewById(R.id.qty);
                             AutoCompleteTextView units = (AutoCompleteTextView) dialog.findViewById(R.id.unit);
-
-
 
 
                             if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
@@ -119,9 +113,10 @@ public class MainActivity extends Activity {
                 db.crossItem(itmPosition._id);
                 updateListView(lastSelection);
             }
+
             @Override
             public void onLongClick(View view, int position) {
-                 final CustomItemAdapter.ViewHolder itmPosition = (CustomItemAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                final CustomItemAdapter.ViewHolder itmPosition = (CustomItemAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
 
                 new MaterialDialog.Builder(MainActivity.this)
                         .title(R.string.edit_item)
@@ -129,8 +124,7 @@ public class MainActivity extends Activity {
                         .itemsCallback(new MaterialDialog.ListCallback() {
                             @Override
                             public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                switch (which)
-                                {
+                                switch (which) {
                                     case 0: {
                                         MaterialDialog dialogEdit = new EditItemActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
                                             @Override
@@ -139,7 +133,7 @@ public class MainActivity extends Activity {
                                                 TextView qty = (TextView) dialog.findViewById(R.id.qty);
                                                 TextView units = (TextView) dialog.findViewById(R.id.unit);
                                                 if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
-                                                    boolean id = db.updateItem(itmPosition._id,name.getText().toString(), qty.getText().toString(),  units.getText().toString());
+                                                    boolean id = db.updateItem(itmPosition._id, name.getText().toString(), qty.getText().toString(), units.getText().toString());
                                                     updateListView(lastSelection);
                                                     DrawerMenu.removeAllItems();
                                                     DrawerMenu.addItems(db.GetCategoryItems());
@@ -156,9 +150,9 @@ public class MainActivity extends Activity {
                                             }
                                         }).autoDismiss(false).build();
 
-                                        EditText name  = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
-                                        EditText qty  = (EditText) dialogEdit.getCustomView().findViewById(R.id.qty);
-                                        EditText unit  = (EditText) dialogEdit.getCustomView().findViewById(R.id.unit);
+                                        EditText name = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
+                                        EditText qty = (EditText) dialogEdit.getCustomView().findViewById(R.id.qty);
+                                        EditText unit = (EditText) dialogEdit.getCustomView().findViewById(R.id.unit);
                                         name.setText(itmPosition._name);
                                         qty.setText(String.valueOf(itmPosition._qty));
                                         unit.setText(itmPosition._unit);
@@ -167,18 +161,20 @@ public class MainActivity extends Activity {
                                     }
                                     case 1: {
                                         boolean ok = db.deleteItem(itmPosition._id);
-                                        if(ok) Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).setAction("Undo", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                db.InsertItem(itmPosition._name,String.valueOf(itmPosition._qty),lastSelection,itmPosition._unit);
-                                                Toast.makeText(MainActivity.this,R.string.recovered,Toast.LENGTH_SHORT).show();
-                                                DrawerMenu.removeAllItems();
-                                                DrawerMenu.addItems(db.GetCategoryItems());
-                                                DrawerMenu.setSelection(lastSelection);
-                                                updateListView(lastSelection);
-                                            }
-                                        }).show();
-                                        else   Snackbar.make(mContent, R.string.item_deleted_error, Snackbar.LENGTH_SHORT).show();
+                                        if (ok)
+                                            Snackbar.make(mContent, R.string.item_deleted, Snackbar.LENGTH_SHORT).setAction("Undo", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    db.InsertItem(itmPosition._name, String.valueOf(itmPosition._qty), lastSelection, itmPosition._unit);
+                                                    Toast.makeText(MainActivity.this, R.string.recovered, Toast.LENGTH_SHORT).show();
+                                                    DrawerMenu.removeAllItems();
+                                                    DrawerMenu.addItems(db.GetCategoryItems());
+                                                    DrawerMenu.setSelection(lastSelection);
+                                                    updateListView(lastSelection);
+                                                }
+                                            }).show();
+                                        else
+                                            Snackbar.make(mContent, R.string.item_deleted_error, Snackbar.LENGTH_SHORT).show();
                                         break;
                                     }
                                 }
@@ -252,8 +248,7 @@ public class MainActivity extends Activity {
                                 .itemsCallback(new MaterialDialog.ListCallback() {
                                     @Override
                                     public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                                        switch (position)
-                                        {
+                                        switch (position) {
                                             case 0: {
                                                 final long id = drawerItem.getIdentifier();
                                                 MaterialDialog dialogEdit = new EditCategoryActivity(MainActivity.this, new MaterialDialog.SingleButtonCallback() {
@@ -261,7 +256,7 @@ public class MainActivity extends Activity {
                                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                                         TextView name = (TextView) dialog.findViewById(R.id.name);
                                                         if (!name.getText().toString().isEmpty()) {
-                                                            boolean ok = db.updateCategory(id,name.getText().toString(),null);
+                                                            boolean ok = db.updateCategory(id, name.getText().toString(), null);
                                                             DrawerMenu.removeAllItems();
                                                             DrawerMenu.addItems(db.GetCategoryItems());
                                                             DrawerMenu.setSelection(lastSelection);
@@ -277,7 +272,7 @@ public class MainActivity extends Activity {
                                                     }
                                                 }).autoDismiss(false).build();
 
-                                                EditText name  = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
+                                                EditText name = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
                                                 name.setText(String.valueOf(drawerItem.getTag()));
                                                 dialogEdit.show();
                                                 break;
@@ -298,11 +293,10 @@ public class MainActivity extends Activity {
                                                     @Override
                                                     public void onClick(View view) {
 
-                                                        Toast.makeText(MainActivity.this,R.string.recovered,Toast.LENGTH_SHORT).show();
-                                                        lastSelection = db.InsertCategoryItem(name,null);
-                                                        for(Item obj : items)
-                                                        {
-                                                            db.InsertItem(obj._name,String.valueOf(obj._count),lastSelection,obj._unit);
+                                                        Toast.makeText(MainActivity.this, R.string.recovered, Toast.LENGTH_SHORT).show();
+                                                        lastSelection = db.InsertCategoryItem(name, null);
+                                                        for (Item obj : items) {
+                                                            db.InsertItem(obj._name, String.valueOf(obj._count), lastSelection, obj._unit);
                                                         }
                                                         DrawerMenu.removeAllItems();
                                                         DrawerMenu.addItems(db.GetCategoryItems());
@@ -364,13 +358,12 @@ public class MainActivity extends Activity {
         //Shake detection
         ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
             @Override
-            public void OnShake()
-            {
-                    db.cleanCrossed(lastSelection);
-                    DrawerMenu.removeAllItems();
-                    DrawerMenu.addItems(db.GetCategoryItems());
-                    DrawerMenu.setSelection(lastSelection);
-                    updateListView(lastSelection);
+            public void OnShake() {
+                db.cleanCrossed(lastSelection);
+                DrawerMenu.removeAllItems();
+                DrawerMenu.addItems(db.GetCategoryItems());
+                DrawerMenu.setSelection(lastSelection);
+                updateListView(lastSelection);
             }
         });
 
@@ -420,16 +413,19 @@ public class MainActivity extends Activity {
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         ShakeDetector.start();
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         ShakeDetector.stop();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
