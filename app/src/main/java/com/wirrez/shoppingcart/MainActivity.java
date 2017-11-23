@@ -3,7 +3,6 @@ package com.wirrez.shoppingcart;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,14 +11,12 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -303,11 +300,10 @@ public class MainActivity extends Activity {
                                     }
                                 }).build();
                                 dialog.show();
-                            }else if(drawerItem.getTag() == "settings")
-                            {
+                            } else if (drawerItem.getTag() == "settings") {
                                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                                startActivityForResult(intent,200);
-                            }else {
+                                startActivityForResult(intent, 200);
+                            } else {
                                 lastSelection = drawerItem.getIdentifier();
                                 updateListView(lastSelection);
                                 mDrawer.closeMenu(true);
@@ -378,11 +374,11 @@ public class MainActivity extends Activity {
             }
         });
     }
-    public void updateShakeDetection()
-    {
-        float sensitivity =  (float)(PreferenceManager.getDefaultSharedPreferences(this).getInt("sensitivityShake",50)/10);    // sensitivityShake
-        int number = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("numShake","2"));
-        ShakeDetector.updateConfiguration(sensitivity,number);
+
+    public void updateShakeDetection() {
+        float sensitivity = (float) (PreferenceManager.getDefaultSharedPreferences(this).getInt("sensitivityShake", 50) / 10);    // sensitivityShake
+        int number = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("numShake", "2"));
+        ShakeDetector.updateConfiguration(sensitivity, number);
     }
 
     @Override
@@ -404,10 +400,11 @@ public class MainActivity extends Activity {
         super.onDestroy();
         ShakeDetector.destroy();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == 200) {
+        if (requestCode == 200) {
             DrawerMenu.removeAllItems();
             DrawerMenu.addItems(db.GetCategoryItems());
             DrawerMenu.setSelection(lastSelection);
