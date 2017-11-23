@@ -282,7 +282,7 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    //Remove from autocomplete too TODO remove from autocomplete
+    //Remove from autocomplete
     public boolean deleteItem(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = db.query(ItemEntry.TABLE_NAME, null, ItemEntry._ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
