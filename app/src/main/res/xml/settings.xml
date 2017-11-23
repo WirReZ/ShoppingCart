@@ -22,6 +22,9 @@
     <Preference android:title="@string/downloadXML"
         android:key="downloadXML"
         android:summary="Download xml file of my shopping list"/>
+    <Preference android:title="@string/uploadXML"
+            android:key="uploadXML"
+            android:summary="Upload xml file to my shopping list"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
