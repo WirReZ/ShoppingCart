@@ -281,8 +281,9 @@ public class MainActivity extends Activity {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         TextView name = (TextView) dialog.findViewById(R.id.name);
+                                        TextView strIcon = (TextView) dialog.findViewById(R.id.StrIcon);
                                         if (!name.getText().toString().isEmpty()) {
-                                            long id = db.InsertCategoryItem(name.getText().toString(), null);
+                                            long id = db.InsertCategoryItem(name.getText().toString(), strIcon.getText().toString());
                                             DrawerMenu.removeAllItems();
                                             DrawerMenu.addItems(db.GetCategoryItems());
                                             if (id != 0) DrawerMenu.setSelection(id);

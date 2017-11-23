@@ -119,12 +119,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Inserting
-    public long InsertCategoryItem(String name, GoogleMaterial.Icon icon) {
+    public long InsertCategoryItem(String name, String icon) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CategoryItemEntry.KEY_NAME, name);
 //        values.put(CategoryItemEntry.KEY_ICON, icon.getName()); // TODO
-        values.put(CategoryItemEntry.KEY_ICON, ""); // TODO
+        values.put(CategoryItemEntry.KEY_ICON, icon); // TODO
         long id = db.insert(CategoryItemEntry.TABLE_NAME, null, values);
         db.close();
         return id;
@@ -162,7 +162,7 @@ public class Database extends SQLiteOpenHelper {
             String valueIcon = cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_ICON));
             GoogleMaterial.Icon icon = null;
             if (!valueIcon.isEmpty()) {
-                icon = GoogleMaterial.Icon.valueOf(valueIcon);
+                 icon = GoogleMaterial.Icon.valueOf(valueIcon);
             }
             Items.add(new CategoryItem(id, cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_NAME)),
                     icon, getCountItemsOfCategory(id)).getPrimaryDrawer());
