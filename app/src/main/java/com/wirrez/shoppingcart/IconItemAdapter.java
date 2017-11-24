@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDAdapter;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.view.IconicsImageView;
@@ -16,11 +18,12 @@ import com.mikepenz.iconics.view.IconicsImageView;
  * Created by walteda on 22.11.2017.
  */
 
-class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
+class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH>implements MDAdapter {
 
     private final GoogleMaterial.Icon[] items;
     private ItemCallback itemCallback;
     public Context mContext;
+    private MaterialDialog dialog;
 
 
     public IconItemAdapter(Context ctx,GoogleMaterial.Icon[] items) {
@@ -51,8 +54,13 @@ class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
         return items.length;
     }
 
+    @Override
+    public void setDialog(MaterialDialog dialog) {
+        this.dialog = dialog;
+    }
+
     interface ItemCallback {
-        void onItemClicked(int itemIndex);
+        void onItemClicked(MaterialDialog dialog,int itemIndex);
     }
 
 
@@ -67,6 +75,7 @@ class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
             title = (TextView) itemView.findViewById(R.id.md_title);
             icon = (IconicsImageView) itemView.findViewById(R.id.md_icon);
             this.adapter = adapter;
+
             itemView.setOnClickListener(this);
         }
 
@@ -75,7 +84,7 @@ class IconItemAdapter extends RecyclerView.Adapter<IconItemAdapter.ButtonVH> {
             if (adapter.itemCallback == null) {
                 return;
             }
-            adapter.itemCallback.onItemClicked(getAdapterPosition());
+            adapter.itemCallback.onItemClicked(adapter.dialog,getAdapterPosition());
 
         }
     }

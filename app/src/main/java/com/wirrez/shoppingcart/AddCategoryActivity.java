@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 public class AddCategoryActivity extends MaterialDialog.Builder {
     public String _icon;
@@ -26,11 +28,14 @@ public class AddCategoryActivity extends MaterialDialog.Builder {
                 final MaterialDialog.Builder dialog;
             final IconItemAdapter adapter =   new IconItemAdapter(context,GoogleMaterial.Icon.values());
                         adapter.setCallbacks(new IconItemAdapter.ItemCallback() {
-                      @Override
-                      public void onItemClicked(int itemIndex) {
-                          TextView icon = contv.findViewById(R.id.StrIcon);
-                          icon.setText(GoogleMaterial.Icon.values()[itemIndex].toString());
-                      }
+                            @Override
+                            public void onItemClicked(MaterialDialog dialog, int itemIndex) {
+                                TextView icon = contv.findViewById(R.id.StrIcon);
+                                IconicsImageView ico = contv.findViewById(R.id.md_icon);
+                                ico.setIcon(new IconicsDrawable(context).icon(GoogleMaterial.Icon.valueOf(GoogleMaterial.Icon.values()[itemIndex].toString())));
+                                icon.setText(GoogleMaterial.Icon.values()[itemIndex].toString());
+                                dialog.dismiss();
+                            }
                   });
                 dialog = new MaterialDialog.Builder(context).title(R.string.select_img).adapter(adapter,null);
                 dialog.show();
