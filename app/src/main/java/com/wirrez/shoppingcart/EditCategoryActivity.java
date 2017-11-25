@@ -20,11 +20,19 @@ public class EditCategoryActivity extends MaterialDialog.Builder {
 
         final View contv = LayoutInflater.from(context).inflate(R.layout.edit_category, null);
         Button btnImg = contv.findViewById(R.id.btnSelectIcon);
-
+        Button btnImgReset = contv.findViewById(R.id.btnDelIcon);
+        btnImgReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView icon = contv.findViewById(R.id.StrIcon);
+                IconicsImageView ico = contv.findViewById(R.id.md_icon);
+                icon.setText("");
+                ico.setIcon(null);
+            }
+        });
         btnImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final MaterialDialog.Builder dialog;
                 final IconItemAdapter adapter =   new IconItemAdapter(context, GoogleMaterial.Icon.values());
                 adapter.setCallbacks(new IconItemAdapter.ItemCallback() {

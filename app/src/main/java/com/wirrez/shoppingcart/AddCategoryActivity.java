@@ -20,6 +20,16 @@ public class AddCategoryActivity extends MaterialDialog.Builder {
 
         final View contv = LayoutInflater.from(context).inflate(R.layout.add_category, null);
         Button btnImg = contv.findViewById(R.id.btnSelectIcon);
+        Button btnImgReset = contv.findViewById(R.id.btnDelIcon);
+        btnImgReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView icon = contv.findViewById(R.id.StrIcon);
+                IconicsImageView ico = contv.findViewById(R.id.md_icon);
+                icon.setText("");
+                ico.setIcon(null);
+            }
+        });
         btnImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,6 +48,7 @@ public class AddCategoryActivity extends MaterialDialog.Builder {
                   });
                 dialog = new MaterialDialog.Builder(context).title(R.string.select_img).adapter(adapter,null);
                 dialog.show();
+
             }
         });
 

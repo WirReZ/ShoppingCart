@@ -240,10 +240,12 @@ public class MainActivity extends Activity {
 
                                                 EditText name = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
                                                 IconicsImageView iconicsImageView = (IconicsImageView) dialogEdit.getCustomView().findViewById(R.id.md_icon);
-                                               // Log.d("Test",String.valueOf( db.getIconOfCategoyItem(drawerItem.getIdentifier()).toString()!= "" ? "A":"B" ) ); // TODO
-                                              //  if(db.getIconOfCategoyItem(drawerItem.getIdentifier()) != "")
-//                                                    iconicsImageView.setIcon(new IconicsDrawable(MainActivity.this).icon(GoogleMaterial.Icon.valueOf(GoogleMaterial.Icon.values()[Integer.parseInt(db.getIconOfCategoyItem(drawerItem.getIdentifier()))].toString())));
-
+                                                TextView icon = dialogEdit.getCustomView().findViewById(R.id.StrIcon);
+                                                if( !db.getIconOfCategoyItem(drawerItem.getIdentifier()).isEmpty())
+                                                {
+                                                    iconicsImageView.setIcon(new IconicsDrawable(MainActivity.this).icon(GoogleMaterial.Icon.valueOf(db.getIconOfCategoyItem(drawerItem.getIdentifier()))));
+                                                    icon.setText( String.valueOf(GoogleMaterial.Icon.valueOf(db.getIconOfCategoyItem(drawerItem.getIdentifier()))));
+                                                }
                                                 name.setText(String.valueOf(drawerItem.getTag()));
                                                 dialogEdit.show();
                                                 break;

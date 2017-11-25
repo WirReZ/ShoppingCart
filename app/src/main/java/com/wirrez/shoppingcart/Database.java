@@ -183,7 +183,6 @@ public class Database extends SQLiteOpenHelper {
         _icon = cr.getString(cr.getColumnIndex(CategoryItemEntry.KEY_ICON));
         cr.close();
         db.close();
-        if(_icon == null) return "";
         return _icon;
     }
 
