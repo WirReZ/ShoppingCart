@@ -41,5 +41,7 @@
     <string name="pref_backup">Backup</string>
     <string name="shakeSensitivity">Sensitivity of shake detection</string>
     <string name="uploadXML">Upload XML</string>
+    <string name="img">Image</string>
+    <string name="delete_img">Remove icon</string>
 
 </resources>

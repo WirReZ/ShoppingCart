@@ -20,6 +20,34 @@
         android:inputType="text"
         android:textColor="#000000"
         android:textSize="@dimen/customEntry" />
-
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="@string/img"
+        android:textColor="#80000000"
+        android:textSize="@dimen/customTitle" />
+    <com.mikepenz.iconics.view.IconicsImageView
+        android:id="@+id/md_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:clickable="false"
+        android:padding="8dp"
+        android:scaleType="fitXY"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSelectIcon"
+        android:text="@string/select_img" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDelIcon"
+        android:text="@string/delete_img" />
+    <TextView
+        android:id="@+id/StrIcon"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

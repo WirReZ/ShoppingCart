@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class Database extends SQLiteOpenHelper {
 
     // Used Items
     String[] UsedItemsEntryColumn = {UsedItemsEntry._ID, UsedItemsEntry.KEY_NAME};
+
+
 
     public static class UsedItemsEntry implements BaseColumns {
         public static final String TABLE_NAME = "UsedItems";
@@ -119,12 +122,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Inserting
-    public long InsertCategoryItem(String name, GoogleMaterial.Icon icon) {
+    public long InsertCategoryItem(String name, String icon) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CategoryItemEntry.KEY_NAME, name);
 //        values.put(CategoryItemEntry.KEY_ICON, icon.getName()); // TODO
-        values.put(CategoryItemEntry.KEY_ICON, ""); // TODO
+        values.put(CategoryItemEntry.KEY_ICON, icon); // TODO
         long id = db.insert(CategoryItemEntry.TABLE_NAME, null, values);
         db.close();
         return id;
@@ -162,7 +165,7 @@ public class Database extends SQLiteOpenHelper {
             String valueIcon = cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_ICON));
             GoogleMaterial.Icon icon = null;
             if (!valueIcon.isEmpty()) {
-                icon = GoogleMaterial.Icon.valueOf(valueIcon);
+                 icon = GoogleMaterial.Icon.valueOf(valueIcon);
             }
             Items.add(new CategoryItem(id, cur.getString(cur.getColumnIndex(CategoryItemEntry.KEY_NAME)),
                     icon, getCountItemsOfCategory(id)).getPrimaryDrawer());
@@ -172,6 +175,17 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return Items.toArray(new PrimaryDrawerItem[Items.size()]);
     }
+    public String getIconOfCategoyItem(long identifier) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String _icon;
+        Cursor cr = db.query(CategoryItemEntry.TABLE_NAME,CategoryItemEntryColumn,CategoryItemEntry._ID+" = ?",new String[]{String.valueOf(identifier)},null,null,null);
+        cr.moveToFirst();
+        _icon = cr.getString(cr.getColumnIndex(CategoryItemEntry.KEY_ICON));
+        cr.close();
+        db.close();
+        return _icon;
+    }
+
 
     public long getFirstCategoryID() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -204,12 +218,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Update
-    public boolean updateCategory(long id, String title, Drawable icon) {
+    public boolean updateCategory(long id, String title, String icon) {
         SQLiteDatabase db = this.getWritableDatabase();
         int result;
         ContentValues values = new ContentValues();
         values.put(CategoryItemEntry.KEY_NAME, title);
-        values.put(CategoryItemEntry.KEY_ICON, "");
+        values.put(CategoryItemEntry.KEY_ICON, icon);
 
         result = db.update(CategoryItemEntry.TABLE_NAME, values, CategoryItemEntry._ID + " = ?", new String[]{String.valueOf(id)});
 

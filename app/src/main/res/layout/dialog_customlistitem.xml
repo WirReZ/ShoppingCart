@@ -1,18 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
-    android:descendantFocusability="blocksDescendants">
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/md_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/md_listitem_margin_left"
-        android:layout_marginStart="@dimen/md_listitem_margin_left"
-        android:textSize="@dimen/md_listitem_textsize" />
+    <com.mikepenz.iconics.view.IconicsImageView
+        android:id="@+id/md_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:clickable="false"
+        android:padding="8dp"
+        android:scaleType="fitXY" />
 
-</RelativeLayout>
+</LinearLayout>
