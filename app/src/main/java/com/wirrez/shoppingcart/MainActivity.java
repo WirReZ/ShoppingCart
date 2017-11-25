@@ -11,6 +11,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -22,6 +23,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.tbouron.shakedetector.library.ShakeDetector;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.IIcon;
+import com.mikepenz.iconics.view.IconicsImageView;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -129,6 +133,8 @@ public class MainActivity extends Activity {
                                                 TextView name = (TextView) dialog.findViewById(R.id.name);
                                                 TextView qty = (TextView) dialog.findViewById(R.id.qty);
                                                 TextView units = (TextView) dialog.findViewById(R.id.unit);
+
+
                                                 if (!name.getText().toString().isEmpty() && !qty.getText().toString().isEmpty() && !units.getText().toString().isEmpty() && lastSelection != -1) {
                                                     boolean id = db.updateItem(itmPosition._id, name.getText().toString(), qty.getText().toString(), units.getText().toString());
                                                     updateListView(lastSelection);
@@ -214,8 +220,9 @@ public class MainActivity extends Activity {
                                                     @Override
                                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                                         TextView name = (TextView) dialog.findViewById(R.id.name);
+                                                        TextView strIcon = (TextView) dialog.findViewById(R.id.StrIcon);
                                                         if (!name.getText().toString().isEmpty()) {
-                                                            boolean ok = db.updateCategory(id, name.getText().toString(), null);
+                                                            boolean ok = db.updateCategory(id, name.getText().toString(), strIcon.getText().toString());
                                                             DrawerMenu.removeAllItems();
                                                             DrawerMenu.addItems(db.GetCategoryItems());
                                                             DrawerMenu.setSelection(lastSelection);
@@ -232,6 +239,11 @@ public class MainActivity extends Activity {
                                                 }).autoDismiss(false).build();
 
                                                 EditText name = (EditText) dialogEdit.getCustomView().findViewById(R.id.name);
+                                                IconicsImageView iconicsImageView = (IconicsImageView) dialogEdit.getCustomView().findViewById(R.id.md_icon);
+                                               // Log.d("Test",String.valueOf( db.getIconOfCategoyItem(drawerItem.getIdentifier()).toString()!= "" ? "A":"B" ) ); // TODO
+                                              //  if(db.getIconOfCategoyItem(drawerItem.getIdentifier()) != "")
+//                                                    iconicsImageView.setIcon(new IconicsDrawable(MainActivity.this).icon(GoogleMaterial.Icon.valueOf(GoogleMaterial.Icon.values()[Integer.parseInt(db.getIconOfCategoyItem(drawerItem.getIdentifier()))].toString())));
+
                                                 name.setText(String.valueOf(drawerItem.getTag()));
                                                 dialogEdit.show();
                                                 break;

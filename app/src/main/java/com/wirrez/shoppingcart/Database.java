@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class Database extends SQLiteOpenHelper {
 
     // Used Items
     String[] UsedItemsEntryColumn = {UsedItemsEntry._ID, UsedItemsEntry.KEY_NAME};
+
+
 
     public static class UsedItemsEntry implements BaseColumns {
         public static final String TABLE_NAME = "UsedItems";
@@ -172,6 +175,18 @@ public class Database extends SQLiteOpenHelper {
         db.close();
         return Items.toArray(new PrimaryDrawerItem[Items.size()]);
     }
+    public String getIconOfCategoyItem(long identifier) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String _icon;
+        Cursor cr = db.query(CategoryItemEntry.TABLE_NAME,CategoryItemEntryColumn,CategoryItemEntry._ID+" = ?",new String[]{String.valueOf(identifier)},null,null,null);
+        cr.moveToFirst();
+        _icon = cr.getString(cr.getColumnIndex(CategoryItemEntry.KEY_ICON));
+        cr.close();
+        db.close();
+        if(_icon == null) return "";
+        return _icon;
+    }
+
 
     public long getFirstCategoryID() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -204,12 +219,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //Update
-    public boolean updateCategory(long id, String title, Drawable icon) {
+    public boolean updateCategory(long id, String title, String icon) {
         SQLiteDatabase db = this.getWritableDatabase();
         int result;
         ContentValues values = new ContentValues();
         values.put(CategoryItemEntry.KEY_NAME, title);
-        values.put(CategoryItemEntry.KEY_ICON, "");
+        values.put(CategoryItemEntry.KEY_ICON, icon);
 
         result = db.update(CategoryItemEntry.TABLE_NAME, values, CategoryItemEntry._ID + " = ?", new String[]{String.valueOf(id)});
 

@@ -15,7 +15,6 @@ import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.view.IconicsImageView;
 
 public class AddCategoryActivity extends MaterialDialog.Builder {
-    public String _icon;
     public AddCategoryActivity(@NonNull final Context context, MaterialDialog.SingleButtonCallback posCallBack, DialogInterface.OnCancelListener negCallBack) {
         super(context);
 
@@ -42,10 +41,6 @@ public class AddCategoryActivity extends MaterialDialog.Builder {
             }
         });
 
-      //  IconicsImageView imageView = contv.findViewById(R.id.icon);
-     //   imageView.setIcon(new IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_collection_item));
-        //ImageDrawa
-       // imageView.setImageDrawable( new ImageDrawable()  );
         this.title(R.string.drawer_add_category)
                 .customView(contv, true)
                 .positiveText(R.string.save)

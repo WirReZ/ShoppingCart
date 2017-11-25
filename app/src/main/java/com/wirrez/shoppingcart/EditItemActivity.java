@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+
 public class EditItemActivity extends MaterialDialog.Builder {
 
     public EditItemActivity(@NonNull Context context, MaterialDialog.SingleButtonCallback posCallBack, MaterialDialog.SingleButtonCallback negCallBack) {
