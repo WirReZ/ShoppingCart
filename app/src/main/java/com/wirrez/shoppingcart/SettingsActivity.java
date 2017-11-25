@@ -1,15 +1,23 @@
 package com.wirrez.shoppingcart;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Xml;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.rustamg.filedialogs.FileDialog;
@@ -28,13 +36,17 @@ import java.io.StringWriter;
 public class SettingsActivity extends AppCompatActivity implements SaveFileDialog.OnFileSelectedListener {
     public FragmentManager fragMan;
     public String action;
+    public static final int PERMISION_REQUEST_SAVE = 100;
+    public static final int PERMISION_REQUEST_OPEN = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PreferencesScreen ps = new PreferencesScreen();
         getFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new PreferencesScreen())
+                .replace(android.R.id.content, ps)
                 .commit();
 
         ActionBar toolbar = getSupportActionBar();
@@ -55,6 +67,7 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
 
     @Override
     public void onFileSelected(FileDialog dialog, File file) {
+
         if (action == "save") {
             XmlSerializer serializer = Xml.newSerializer();
             StringWriter writer = new StringWriter();
@@ -81,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
                 }
                 serializer.endTag("", "categories");
                 serializer.endDocument();
-                outputStream = new FileWriter(file+".xml");
+                outputStream = new FileWriter(file);
                 outputStream.write(writer.toString());
                 outputStream.close();
 
@@ -125,10 +138,13 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
         action = "";
     }
 
-    public class PreferencesScreen extends PreferenceFragment {
+
+    @SuppressLint("ValidFragment")
+    public class PreferencesScreen extends PreferenceFragment implements ActivityCompat.OnRequestPermissionsResultCallback {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
+
         }
 
         @Override
@@ -138,14 +154,13 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
             btnXML.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    //Make backup XML
-                    action = "save";
-                    FileDialog dialog = new SaveFileDialog();
-                    dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
-                    Bundle args = new Bundle();
-                    dialog.show(fragMan, SaveFileDialog.class.getName());
 
-
+                    if (ActivityCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)  == PackageManager.PERMISSION_GRANTED) {
+                        callSaveDialog();
+                    }else
+                    {
+                        requestPermissionForSave();
+                    }
                     return true;
                 }
             });
@@ -153,12 +168,12 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
             btnUploadXML.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    action = "open";
-                    FileDialog dialog = new OpenFileDialog();
-                    dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
-                    Bundle args = new Bundle();
-                    args.putString(FileDialog.EXTENSION, "xml");
-                    dialog.show(fragMan, OpenFileDialog.class.getName());
+                    if (ActivityCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)  == PackageManager.PERMISSION_GRANTED) {
+                        callOpenDialog();
+                    }else
+                    {
+                        requestPermissionForOpen();
+                    }
                     return true;
                 }
             });
@@ -166,6 +181,61 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
         }
 
     }
+    private void callSaveDialog()
+    {
+        action = "save";
+        FileDialog dialog = new SaveFileDialog();
+        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
+        Bundle args = new Bundle();
+        args.putString(FileDialog.EXTENSION, ".xml");
+        dialog.setArguments(args);
+        dialog.show(fragMan, SaveFileDialog.class.getName());
+    }
+    private void callOpenDialog()
+    {
+        action = "open";
+        FileDialog dialog = new OpenFileDialog();
+        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
+        Bundle args = new Bundle();
+        args.putString(FileDialog.EXTENSION, "xml");
+        dialog.setArguments(args);
+        dialog.show(fragMan, OpenFileDialog.class.getName());
+    }
 
+    private void requestPermissionForSave() {
+            ActivityCompat.requestPermissions(SettingsActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISION_REQUEST_SAVE);
+    }
+    private void requestPermissionForOpen() {
+            ActivityCompat.requestPermissions(SettingsActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},PERMISION_REQUEST_OPEN);
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case PERMISION_REQUEST_OPEN:
+            {
+                if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    callOpenDialog();
+                }else
+                {
+                    Toast.makeText(this,R.string.permission_need,Toast.LENGTH_SHORT).show();
+                }
+            }
+            break;
+            case PERMISION_REQUEST_SAVE:
+            {
+                if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    callSaveDialog();
+                }else
+                {
+                    Toast.makeText(this,R.string.permission_need,Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
+    }
 }
