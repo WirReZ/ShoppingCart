@@ -66,8 +66,9 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
                 serializer.startTag("", "categories");
                 for (PrimaryDrawerItem catItem : db.GetCategoryItems()) {
                     serializer.startTag("", "category");
-                    serializer.attribute("", "id", String.valueOf(catItem.getIdentifier()));
+                    serializer.attribute(null, "icon", String.valueOf(db.getIconOfCategoyItem(catItem.getIdentifier())));
                     serializer.attribute("", "name", String.valueOf(catItem.getTag()));
+                    serializer.attribute("", "id", String.valueOf(catItem.getIdentifier()));
                     for (Item item : db.getItems(catItem.getIdentifier())) {
                         serializer.startTag("", "item");
                         serializer.attribute("", "id", String.valueOf(item._id));
@@ -80,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
                 }
                 serializer.endTag("", "categories");
                 serializer.endDocument();
-                outputStream = new FileWriter(file);
+                outputStream = new FileWriter(file+".xml");
                 outputStream.write(writer.toString());
                 outputStream.close();
 
@@ -102,7 +103,8 @@ public class SettingsActivity extends AppCompatActivity implements SaveFileDialo
                             element = parser.getName();
                             if (element.equalsIgnoreCase("category")) {
                                 String name = parser.getAttributeValue(null, "name");
-                                lastid = db.InsertCategoryItem(name, null);
+                                String icon = parser.getAttributeValue("", "icon");
+                                lastid = db.InsertCategoryItem(name, icon);
                             } else if (element.equalsIgnoreCase("item")) {
                                 String name = parser.getAttributeValue(null, "name");
                                 String count = parser.getAttributeValue(null, "count");
